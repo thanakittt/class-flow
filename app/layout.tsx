@@ -5,6 +5,22 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
+const themeScript = `
+(function(){
+  try {
+    var key = "class-flow-theme";
+    var preference = localStorage.getItem(key);
+    if (preference !== "light" && preference !== "dark" && preference !== "system") {
+      preference = "system";
+    }
+    var systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var theme = preference === "system" ? (systemDark ? "dark" : "light") : preference;
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.style.colorScheme = theme;
+  } catch (error) {}
+})();
+`;
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,7 +45,14 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          id="class-flow-theme"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
