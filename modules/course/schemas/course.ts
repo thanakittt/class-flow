@@ -4,6 +4,20 @@ export const COURSE_DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as 
 
 export type CourseDay = (typeof COURSE_DAYS)[number]
 
+export const COURSE_DAY_LABELS: Record<CourseDay, string> = {
+  MON: "วันจันทร์",
+  TUE: "วันอังคาร",
+  WED: "วันพุธ",
+  THU: "วันพฤหัสบดี",
+  FRI: "วันศุกร์",
+  SAT: "วันเสาร์",
+  SUN: "วันอาทิตย์",
+}
+
+export function getCourseDayLabel(day: CourseDay) {
+  return COURSE_DAY_LABELS[day]
+}
+
 export type Course = {
   code: string
   englishName: string
@@ -18,7 +32,7 @@ export type Course = {
 
 const timeSchema = z
   .string()
-  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm format.")
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "กรุณากรอกเวลาในรูปแบบ HH:mm")
 
 function timeToMinutes(value: string) {
   const [hours, minutes] = value.split(":").map(Number)
@@ -30,42 +44,42 @@ export const courseSchema = z
     code: z
       .string()
       .trim()
-      .min(1, "Course code is required.")
-      .max(32, "Course code must be 32 characters or less."),
+      .min(1, "กรุณากรอกรหัสรายวิชา")
+      .max(32, "รหัสรายวิชาต้องไม่เกิน 32 ตัวอักษร"),
     englishName: z
       .string()
       .trim()
-      .min(1, "English name is required.")
-      .max(160, "English name must be 160 characters or less."),
+      .min(1, "กรุณากรอกชื่อรายวิชาภาษาอังกฤษ")
+      .max(160, "ชื่อรายวิชาภาษาอังกฤษต้องไม่เกิน 160 ตัวอักษร"),
     thaiName: z
       .string()
       .trim()
-      .min(1, "Thai name is required.")
-      .max(160, "Thai name must be 160 characters or less."),
+      .min(1, "กรุณากรอกชื่อรายวิชาภาษาไทย")
+      .max(160, "ชื่อรายวิชาภาษาไทยต้องไม่เกิน 160 ตัวอักษร"),
     instructor: z
       .string()
       .trim()
-      .min(1, "Instructor is required.")
-      .max(120, "Instructor must be 120 characters or less."),
-    day: z.enum(COURSE_DAYS, "Select a course day."),
+      .min(1, "กรุณากรอกชื่อผู้สอน")
+      .max(120, "ชื่อผู้สอนต้องไม่เกิน 120 ตัวอักษร"),
+    day: z.enum(COURSE_DAYS, "กรุณาเลือกวันเรียน"),
     startTime: timeSchema,
     endTime: timeSchema,
     location: z
       .string()
       .trim()
-      .min(1, "Location is required.")
-      .max(120, "Location must be 120 characters or less."),
+      .min(1, "กรุณากรอกสถานที่เรียน")
+      .max(120, "สถานที่เรียนต้องไม่เกิน 120 ตัวอักษร"),
     section: z.coerce
       .number<number>()
-      .int("Section must be a whole number.")
-      .positive("Section must be greater than 0."),
+      .int("หมู่เรียนต้องเป็นจำนวนเต็ม")
+      .positive("หมู่เรียนต้องมากกว่า 0"),
   })
   .superRefine((value, ctx) => {
     if (timeToMinutes(value.endTime) <= timeToMinutes(value.startTime)) {
       ctx.addIssue({
         code: "custom",
         path: ["endTime"],
-        message: "End time must be after start time.",
+        message: "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มต้น",
       })
     }
   })

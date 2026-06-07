@@ -70,7 +70,7 @@ export function ThemeToggle() {
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, preference)
     } catch {
-      // Ignore unavailable storage; the selected theme still applies for this tab.
+      // ถ้า storage ใช้ไม่ได้ ธีมที่เลือกยังมีผลในแท็บนี้
     }
 
     const media = window.matchMedia("(prefers-color-scheme: dark)")
@@ -96,12 +96,12 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" type="button" variant="outline" aria-label="Change theme">
+        <Button size="icon" type="button" variant="outline" aria-label="เปลี่ยนธีม">
           <TriggerIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>ธีม</DropdownMenuLabel>
         <DropdownMenuRadioGroup
           value={preference}
           onValueChange={(value) => {
@@ -112,15 +112,15 @@ export function ThemeToggle() {
         >
           <DropdownMenuRadioItem value="light">
             <SunIcon />
-            Light
+            สว่าง
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="dark">
             <MoonIcon />
-            Dark
+            มืด
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="system">
             <LaptopIcon />
-            System
+            ตามระบบ
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

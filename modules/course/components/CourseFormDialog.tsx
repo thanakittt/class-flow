@@ -34,6 +34,7 @@ import {
   courseSchema,
   courseToFormValues,
   emptyCourseFormValues,
+  getCourseDayLabel,
   type Course,
   type CourseActionResult,
   type CourseFormValues,
@@ -154,16 +155,16 @@ export function CourseFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? "Edit course" : "Create course"}</DialogTitle>
+          <DialogTitle>{isEditMode ? "แก้ไขรายวิชา" : "เพิ่มรายวิชา"}</DialogTitle>
           <DialogDescription>
-            Manage course identity, schedule, instructor, and location.
+            จัดการข้อมูลรายวิชา เวลาเรียน ผู้สอน และสถานที่เรียน
           </DialogDescription>
         </DialogHeader>
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(submit)}>
           <FieldGroup>
             <div className="grid gap-4 md:grid-cols-2">
               <Field data-invalid={!!errors.code}>
-                <FieldLabel htmlFor="code">Code</FieldLabel>
+                <FieldLabel htmlFor="code">รหัสรายวิชา</FieldLabel>
                 <Input
                   aria-invalid={!!errors.code}
                   id="code"
@@ -173,7 +174,7 @@ export function CourseFormDialog({
                 <FieldError errors={[errors.code]} />
               </Field>
               <Field data-invalid={!!errors.section}>
-                <FieldLabel htmlFor="section">Section</FieldLabel>
+                <FieldLabel htmlFor="section">หมู่เรียน</FieldLabel>
                 <Input
                   aria-invalid={!!errors.section}
                   id="section"
@@ -185,7 +186,7 @@ export function CourseFormDialog({
               </Field>
             </div>
             <Field data-invalid={!!errors.englishName}>
-              <FieldLabel htmlFor="englishName">English name</FieldLabel>
+              <FieldLabel htmlFor="englishName">ชื่อรายวิชาภาษาอังกฤษ</FieldLabel>
               <Input
                 aria-invalid={!!errors.englishName}
                 id="englishName"
@@ -194,7 +195,7 @@ export function CourseFormDialog({
               <FieldError errors={[errors.englishName]} />
             </Field>
             <Field data-invalid={!!errors.thaiName}>
-              <FieldLabel htmlFor="thaiName">Thai name</FieldLabel>
+              <FieldLabel htmlFor="thaiName">ชื่อรายวิชาภาษาไทย</FieldLabel>
               <Input
                 aria-invalid={!!errors.thaiName}
                 id="thaiName"
@@ -204,7 +205,7 @@ export function CourseFormDialog({
             </Field>
             <div className="grid gap-4 md:grid-cols-2">
               <Field data-invalid={!!errors.instructor}>
-                <FieldLabel htmlFor="instructor">Instructor</FieldLabel>
+                <FieldLabel htmlFor="instructor">ผู้สอน</FieldLabel>
                 <Input
                   aria-invalid={!!errors.instructor}
                   id="instructor"
@@ -213,7 +214,7 @@ export function CourseFormDialog({
                 <FieldError errors={[errors.instructor]} />
               </Field>
               <Field data-invalid={!!errors.location}>
-                <FieldLabel htmlFor="location">Location</FieldLabel>
+                <FieldLabel htmlFor="location">สถานที่เรียน</FieldLabel>
                 <Input
                   aria-invalid={!!errors.location}
                   id="location"
@@ -228,16 +229,16 @@ export function CourseFormDialog({
                 name="day"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error}>
-                    <FieldLabel>Day</FieldLabel>
+                    <FieldLabel>วันเรียน</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger aria-invalid={!!fieldState.error} className="w-full">
-                        <SelectValue placeholder="Select day" />
+                        <SelectValue placeholder="เลือกวันเรียน" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           {COURSE_DAYS.map((courseDay) => (
                             <SelectItem key={courseDay} value={courseDay}>
-                              {courseDay}
+                              {getCourseDayLabel(courseDay)}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -248,7 +249,7 @@ export function CourseFormDialog({
                 )}
               />
               <Field data-invalid={!!errors.startTime}>
-                <FieldLabel htmlFor="startTime">Start time</FieldLabel>
+                <FieldLabel htmlFor="startTime">เวลาเริ่มต้น</FieldLabel>
                 <Input
                   aria-invalid={!!errors.startTime}
                   id="startTime"
@@ -258,7 +259,7 @@ export function CourseFormDialog({
                 <FieldError errors={[errors.startTime]} />
               </Field>
               <Field data-invalid={!!errors.endTime}>
-                <FieldLabel htmlFor="endTime">End time</FieldLabel>
+                <FieldLabel htmlFor="endTime">เวลาสิ้นสุด</FieldLabel>
                 <Input
                   aria-invalid={!!errors.endTime}
                   id="endTime"
@@ -276,11 +277,11 @@ export function CourseFormDialog({
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              ยกเลิก
             </Button>
             <Button disabled={isSubmitting} type="submit">
               {isSubmitting ? <Spinner data-icon="inline-start" /> : <SaveIcon data-icon="inline-start" />}
-              {isEditMode ? "Save changes" : "Create course"}
+              {isEditMode ? "บันทึกการแก้ไข" : "เพิ่มรายวิชา"}
             </Button>
           </DialogFooter>
         </form>

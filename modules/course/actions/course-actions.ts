@@ -21,23 +21,23 @@ function getDatabaseMessage(error: unknown): CourseActionResult {
   if (message.includes("duplicate key") || message.includes("courses_pkey")) {
     return {
       ok: false,
-      message: "Course code already exists.",
-      fieldErrors: { code: ["Course code already exists."] },
+      message: "มีรหัสรายวิชานี้อยู่แล้ว",
+      fieldErrors: { code: ["มีรหัสรายวิชานี้อยู่แล้ว"] },
     }
   }
 
   if (message.includes("courses_end_time_after_start_time")) {
     return {
       ok: false,
-      message: "End time must be after start time.",
-      fieldErrors: { endTime: ["End time must be after start time."] },
+      message: "เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มต้น",
+      fieldErrors: { endTime: ["เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่มต้น"] },
     }
   }
 
   return {
     ok: false,
-    message: "Something went wrong. Please try again.",
-    fieldErrors: { root: ["Something went wrong. Please try again."] },
+    message: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    fieldErrors: { root: ["เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"] },
   }
 }
 
@@ -47,7 +47,7 @@ export async function createCourseAction(values: CourseFormValues): Promise<Cour
   if (!parsed.success) {
     return {
       ok: false,
-      message: "Please check the course details.",
+      message: "กรุณาตรวจสอบข้อมูลรายวิชา",
       fieldErrors: toFieldErrors(parsed.error),
     }
   }
@@ -81,7 +81,7 @@ export async function createCourseAction(values: CourseFormValues): Promise<Cour
     `
 
     revalidatePath("/courses")
-    return { ok: true, message: "Course created." }
+    return { ok: true, message: "สร้างรายวิชาแล้ว" }
   } catch (error) {
     return getDatabaseMessage(error)
   }
@@ -96,7 +96,7 @@ export async function updateCourseAction(
   if (!parsed.success) {
     return {
       ok: false,
-      message: "Please check the course details.",
+      message: "กรุณาตรวจสอบข้อมูลรายวิชา",
       fieldErrors: toFieldErrors(parsed.error),
     }
   }
@@ -104,8 +104,8 @@ export async function updateCourseAction(
   if (parsed.data.code !== code) {
     return {
       ok: false,
-      message: "Course code cannot be changed.",
-      fieldErrors: { code: ["Course code cannot be changed."] },
+      message: "ไม่สามารถเปลี่ยนรหัสรายวิชาได้",
+      fieldErrors: { code: ["ไม่สามารถเปลี่ยนรหัสรายวิชาได้"] },
     }
   }
 
@@ -127,7 +127,7 @@ export async function updateCourseAction(
     `
 
     revalidatePath("/courses")
-    return { ok: true, message: "Course updated." }
+    return { ok: true, message: "บันทึกการแก้ไขรายวิชาแล้ว" }
   } catch (error) {
     return getDatabaseMessage(error)
   }
@@ -137,12 +137,12 @@ export async function deleteCourseAction(code: string): Promise<CourseActionResu
   try {
     await sql`DELETE FROM courses WHERE code = ${code}`
     revalidatePath("/courses")
-    return { ok: true, message: "Course deleted." }
+    return { ok: true, message: "ลบรายวิชาแล้ว" }
   } catch {
     return {
       ok: false,
-      message: "Unable to delete this course. Please try again.",
-      fieldErrors: { root: ["Unable to delete this course. Please try again."] },
+      message: "ไม่สามารถลบรายวิชานี้ได้ กรุณาลองใหม่อีกครั้ง",
+      fieldErrors: { root: ["ไม่สามารถลบรายวิชานี้ได้ กรุณาลองใหม่อีกครั้ง"] },
     }
   }
 }

@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { COURSE_DAYS } from "@/modules/course/schemas/course"
+import { COURSE_DAYS, getCourseDayLabel } from "@/modules/course/schemas/course"
 
 type CourseFiltersProps = {
   query: string
@@ -63,20 +63,20 @@ export function CourseFilters({ query, day }: CourseFiltersProps) {
           className="pl-8"
           name="q"
           onChange={(event) => setDraftQuery(event.target.value)}
-          placeholder="Search courses"
+          placeholder="ค้นหารายวิชา"
           value={draftQuery}
         />
       </div>
       <Select onValueChange={setDraftDay} value={draftDay}>
         <SelectTrigger className="w-full md:w-40">
-          <SelectValue placeholder="Day" />
+          <SelectValue placeholder="วันเรียน" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="all">All days</SelectItem>
+            <SelectItem value="all">ทุกวัน</SelectItem>
             {COURSE_DAYS.map((courseDay) => (
               <SelectItem key={courseDay} value={courseDay}>
-                {courseDay}
+                {getCourseDayLabel(courseDay)}
               </SelectItem>
             ))}
           </SelectGroup>
@@ -85,11 +85,11 @@ export function CourseFilters({ query, day }: CourseFiltersProps) {
       <div className="flex gap-2">
         <Button type="submit">
           <SearchIcon data-icon="inline-start" />
-          Search
+          ค้นหา
         </Button>
         <Button type="button" variant="outline" onClick={clearFilters}>
           <XIcon data-icon="inline-start" />
-          Clear
+          ล้าง
         </Button>
       </div>
     </form>

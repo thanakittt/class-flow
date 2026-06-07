@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { Course } from "@/modules/course/schemas/course"
+import { getCourseDayLabel, type Course } from "@/modules/course/schemas/course"
 
 type CourseTableProps = {
   courses: Course[]
@@ -25,12 +25,12 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Code</TableHead>
-          <TableHead>Course</TableHead>
-          <TableHead>Instructor</TableHead>
-          <TableHead>Schedule</TableHead>
-          <TableHead>Location</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>รหัส</TableHead>
+          <TableHead>รายวิชา</TableHead>
+          <TableHead>ผู้สอน</TableHead>
+          <TableHead>เวลาเรียน</TableHead>
+          <TableHead>สถานที่</TableHead>
+          <TableHead className="text-right">การจัดการ</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -39,7 +39,7 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
             <TableCell className="font-medium">
               <div className="flex items-center gap-2">
                 <span>{course.code}</span>
-                <Badge variant="secondary">Sec {course.section}</Badge>
+                <Badge variant="secondary">หมู่ {course.section}</Badge>
               </div>
             </TableCell>
             <TableCell>
@@ -51,7 +51,7 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
             <TableCell>{course.instructor}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Badge variant="outline">{course.day}</Badge>
+                <Badge variant="outline">{getCourseDayLabel(course.day)}</Badge>
                 <span>
                   {course.startTime}-{course.endTime}
                 </span>
@@ -62,7 +62,7 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
               <div className="flex justify-end gap-2">
                 <Button size="icon-sm" type="button" variant="ghost" onClick={() => onEdit(course)}>
                   <EditIcon />
-                  <span className="sr-only">Edit {course.code}</span>
+                  <span className="sr-only">แก้ไขรายวิชา {course.code}</span>
                 </Button>
                 <Button
                   size="icon-sm"
@@ -71,7 +71,7 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
                   onClick={() => onDelete(course)}
                 >
                   <Trash2Icon />
-                  <span className="sr-only">Delete {course.code}</span>
+                  <span className="sr-only">ลบรายวิชา {course.code}</span>
                 </Button>
               </div>
             </TableCell>

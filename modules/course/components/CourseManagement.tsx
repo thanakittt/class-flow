@@ -80,8 +80,8 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
     if (!editingCourse) {
       return {
         ok: false as const,
-        message: "Select a course before editing.",
-        fieldErrors: { root: ["Select a course before editing."] },
+        message: "กรุณาเลือกรายวิชาก่อนแก้ไข",
+        fieldErrors: { root: ["กรุณาเลือกรายวิชาก่อนแก้ไข"] },
       }
     }
 
@@ -93,24 +93,24 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium text-muted-foreground">Class Flow</p>
-          <h1 className="text-3xl font-semibold tracking-tight">Courses</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">รายวิชา</h1>
           <p className="max-w-2xl text-muted-foreground">
-            Create, edit, filter, and maintain course schedules.
+            เพิ่ม แก้ไข ค้นหา และดูแลตารางเรียนของรายวิชาในระบบ
           </p>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button onClick={() => setCreateOpen(true)}>
             <PlusIcon data-icon="inline-start" />
-            New course
+            เพิ่มรายวิชา
           </Button>
         </div>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle>Course list</CardTitle>
-          <CardDescription>{courses.length} course{courses.length === 1 ? "" : "s"} found</CardDescription>
+          <CardTitle>รายการรายวิชา</CardTitle>
+          <CardDescription>พบ {courses.length} รายวิชา</CardDescription>
           <CardAction className="hidden md:block">
             <BookOpenIcon className="text-muted-foreground" />
           </CardAction>
@@ -129,15 +129,15 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
                 <EmptyMedia variant="icon">
                   <BookOpenIcon />
                 </EmptyMedia>
-                <EmptyTitle>No courses found</EmptyTitle>
+                <EmptyTitle>ไม่พบรายวิชา</EmptyTitle>
                 <EmptyDescription>
-                  Add a new course or adjust the current filters.
+                  เพิ่มรายวิชาใหม่ หรือปรับเงื่อนไขการค้นหาปัจจุบัน
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Button onClick={() => setCreateOpen(true)}>
                   <PlusIcon data-icon="inline-start" />
-                  New course
+                  เพิ่มรายวิชา
                 </Button>
               </EmptyContent>
             </Empty>
@@ -168,9 +168,9 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
             <AlertDialogMedia>
               <Trash2Icon />
             </AlertDialogMedia>
-            <AlertDialogTitle>Delete course?</AlertDialogTitle>
+            <AlertDialogTitle>ลบรายวิชานี้หรือไม่</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete {deletingCourse?.code}. This action cannot be undone.
+              ระบบจะลบรายวิชา {deletingCourse?.code} อย่างถาวร และไม่สามารถย้อนกลับได้
             </AlertDialogDescription>
           </AlertDialogHeader>
           {deleteError && (
@@ -179,7 +179,7 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
             </p>
           )}
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>ยกเลิก</AlertDialogCancel>
             <AlertDialogAction
               disabled={isDeleting}
               onClick={(event) => {
@@ -189,7 +189,7 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
               variant="destructive"
             >
               {isDeleting ? <Spinner data-icon="inline-start" /> : <Trash2Icon data-icon="inline-start" />}
-              Delete
+              ลบรายวิชา
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
