@@ -7,18 +7,26 @@ type CoursesPageProps = {
   searchParams: Promise<{
     day?: string | string[]
     q?: string | string[]
+    view?: string | string[]
   }>
 }
 
+export type CourseView = "table" | "card"
+
 function getSingleParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
+}
+
+function resolveCourseView(value: string | undefined): CourseView {
+  return value === "card" ? "card" : "table"
 }
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const params = await searchParams
   const query = getSingleParam(params.q)?.trim() ?? ""
   const day = normalizeCourseDay(getSingleParam(params.day))
+  const view = resolveCourseView(getSingleParam(params.view))
   const courses = await listCourses({ day, query })
 
-  return <CourseManagement courses={courses} filters={{ day: day ?? "", query }} />
+  return <CourseManagement courses={courses} filters={{ day: day ?? "", query }} view={view} />
 }

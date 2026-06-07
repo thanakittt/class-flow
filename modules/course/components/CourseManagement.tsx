@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { BookOpenIcon, PlusIcon, Trash2Icon } from "lucide-react"
 
 import {
@@ -32,16 +33,20 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   createCourseAction,
   deleteCourseAction,
   updateCourseAction,
 } from "@/modules/course/actions/course-actions"
+import { CourseCardView } from "@/modules/course/components/CourseCardView"
 import { CourseFilters } from "@/modules/course/components/CourseFilters"
 import { CourseFormDialog } from "@/modules/course/components/CourseFormDialog"
 import { CourseTable } from "@/modules/course/components/CourseTable"
 import { ThemeToggle } from "@/modules/course/components/ThemeToggle"
 import type { Course, CourseFormValues } from "@/modules/course/schemas/course"
+
+type CourseView = "table" | "card"
 
 type CourseManagementProps = {
   courses: Course[]
@@ -49,14 +54,36 @@ type CourseManagementProps = {
     day: string
     query: string
   }
+  view: CourseView
 }
 
-export function CourseManagement({ courses, filters }: CourseManagementProps) {
+export function CourseManagement({ courses, filters, view }: CourseManagementProps) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [createOpen, setCreateOpen] = useState(false)
   const [editingCourse, setEditingCourse] = useState<Course | undefined>()
   const [deletingCourse, setDeletingCourse] = useState<Course | undefined>()
   const [deleteError, setDeleteError] = useState<string | undefined>()
   const [isDeleting, startDeleteTransition] = useTransition()
+
+  function updateView(nextView: string) {
+    const params = new URLSearchParams()
+
+    if (filters.query) {
+      params.set("q", filters.query)
+    }
+
+    if (filters.day) {
+      params.set("day", filters.day)
+    }
+
+    if (nextView === "card") {
+      params.set("view", nextView)
+    }
+
+    const search = params.toString()
+    router.replace(search ? `${pathname}?${search}` : pathname)
+  }
 
   function deleteSelectedCourse() {
     if (!deletingCourse) {
@@ -115,18 +142,35 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
             <BookOpenIcon className="text-muted-foreground" />
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col gap-5">
-          <CourseFilters
-            key={`${filters.query}:${filters.day}`}
-            day={filters.day}
-            query={filters.query}
-          />
-          {courses.length > 0 ? (
-            <CourseTable
-              courses={courses}
-              onDelete={setDeletingCourse}
-              onEdit={setEditingCourse}
+        <CardContent>
+          <Tabs className="gap-5" value={view} onValueChange={updateView}>
+            <TabsList>
+              <TabsTrigger value="table">ตาราง</TabsTrigger>
+              <TabsTrigger value="card">การ์ด</TabsTrigger>
+            </TabsList>
+            <CourseFilters
+              key={`${filters.query}:${filters.day}:${view}`}
+              day={filters.day}
+              query={filters.query}
+              view={view}
             />
+            {courses.length > 0 ? (
+              <>
+                <TabsContent value="table">
+                  <CourseTable
+                    courses={courses}
+                    onDelete={setDeletingCourse}
+                    onEdit={setEditingCourse}
+                  />
+                </TabsContent>
+                <TabsContent value="card">
+                  <CourseCardView
+                    courses={courses}
+                    onDelete={setDeletingCourse}
+                    onEdit={setEditingCourse}
+                  />
+                </TabsContent>
+              </>
           ) : (
             <Empty>
               <EmptyHeader>
@@ -145,7 +189,8 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
                 </Button>
               </EmptyContent>
             </Empty>
-          )}
+            )}
+          </Tabs>
         </CardContent>
       </Card>
 

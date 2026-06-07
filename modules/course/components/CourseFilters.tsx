@@ -19,13 +19,20 @@ import { COURSE_DAYS, getCourseDayLabel } from "@/modules/course/schemas/course"
 type CourseFiltersProps = {
   query: string
   day: string
+  view: "table" | "card"
 }
 
-export function CourseFilters({ query, day }: CourseFiltersProps) {
+export function CourseFilters({ query, day, view }: CourseFiltersProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [draftQuery, setDraftQuery] = useState(query)
   const [draftDay, setDraftDay] = useState(day || "all")
+
+  function preserveView(params: URLSearchParams) {
+    if (view === "card") {
+      params.set("view", view)
+    }
+  }
 
   function applyFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -41,6 +48,8 @@ export function CourseFilters({ query, day }: CourseFiltersProps) {
       params.set("day", draftDay)
     }
 
+    preserveView(params)
+
     const search = params.toString()
     router.replace(search ? `${pathname}?${search}` : pathname)
   }
@@ -48,7 +57,11 @@ export function CourseFilters({ query, day }: CourseFiltersProps) {
   function clearFilters() {
     setDraftQuery("")
     setDraftDay("all")
-    router.replace(pathname)
+
+    const params = new URLSearchParams()
+    preserveView(params)
+    const search = params.toString()
+    router.replace(search ? `${pathname}?${search}` : pathname)
   }
 
   return (
