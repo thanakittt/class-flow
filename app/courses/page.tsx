@@ -1,4 +1,7 @@
+import { redirect } from "next/navigation"
+
 import { CourseManagement } from "@/modules/course/components/CourseManagement"
+import { getCurrentUser, isAdminUser } from "@/lib/auth/server"
 import {
   listCourses,
   normalizeCourseDayFilter,
@@ -26,6 +29,12 @@ function resolveCourseView(value: string | undefined): CourseView {
 }
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect("/auth/sign-in")
+  }
+
   const params = await searchParams
   const query = getSingleParam(params.q)?.trim() ?? ""
   const dayFilter = normalizeCourseDayFilter(getSingleParam(params.day))
@@ -33,5 +42,12 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const view = resolveCourseView(getSingleParam(params.view))
   const courses = await listCourses({ day, query })
 
-  return <CourseManagement courses={courses} filters={{ day: dayFilter ?? "", query }} view={view} />
+  return (
+    <CourseManagement
+      canManageCourses={isAdminUser(user)}
+      courses={courses}
+      filters={{ day: dayFilter ?? "", query }}
+      view={view}
+    />
+  )
 }

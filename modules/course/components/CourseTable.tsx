@@ -15,12 +15,18 @@ import {
 import { getCourseDayLabel, type Course } from "@/modules/course/schemas/course"
 
 type CourseTableProps = {
+  canManageCourses: boolean
   courses: Course[]
   onDelete: (course: Course) => void
   onEdit: (course: Course) => void
 }
 
-export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
+export function CourseTable({
+  canManageCourses,
+  courses,
+  onDelete,
+  onEdit,
+}: CourseTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -30,7 +36,7 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
           <TableHead>ผู้สอน</TableHead>
           <TableHead>เวลาเรียน</TableHead>
           <TableHead>สถานที่</TableHead>
-          <TableHead className="text-right">การจัดการ</TableHead>
+          {canManageCourses && <TableHead className="text-right">การจัดการ</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -58,23 +64,25 @@ export function CourseTable({ courses, onDelete, onEdit }: CourseTableProps) {
               </div>
             </TableCell>
             <TableCell>{course.location}</TableCell>
-            <TableCell>
-              <div className="flex justify-end gap-2">
-                <Button size="icon-sm" type="button" variant="ghost" onClick={() => onEdit(course)}>
-                  <EditIcon />
-                  <span className="sr-only">แก้ไขรายวิชา {course.code}</span>
-                </Button>
-                <Button
-                  size="icon-sm"
-                  type="button"
-                  variant="destructive"
-                  onClick={() => onDelete(course)}
-                >
-                  <Trash2Icon />
-                  <span className="sr-only">ลบรายวิชา {course.code}</span>
-                </Button>
-              </div>
-            </TableCell>
+            {canManageCourses && (
+              <TableCell>
+                <div className="flex justify-end gap-2">
+                  <Button size="icon-sm" type="button" variant="ghost" onClick={() => onEdit(course)}>
+                    <EditIcon />
+                    <span className="sr-only">แก้ไขรายวิชา {course.code}</span>
+                  </Button>
+                  <Button
+                    size="icon-sm"
+                    type="button"
+                    variant="destructive"
+                    onClick={() => onDelete(course)}
+                  >
+                    <Trash2Icon />
+                    <span className="sr-only">ลบรายวิชา {course.code}</span>
+                  </Button>
+                </div>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>

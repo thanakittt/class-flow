@@ -60,6 +60,19 @@ const fieldNames = [
   "section",
 ] as const
 
+const unexpectedSubmitMessage =
+  "เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง"
+
+function isCourseActionResult(value: unknown): value is CourseActionResult {
+  if (!value || typeof value !== "object") {
+    return false
+  }
+
+  const result = value as { ok?: unknown; message?: unknown }
+
+  return result.ok === true || (result.ok === false && typeof result.message === "string")
+}
+
 const courseFormResolver: Resolver<CourseFormValues> = async (values) => {
   const parsed = courseSchema.safeParse(values)
 
@@ -124,7 +137,22 @@ export function CourseFormDialog({
   }, [course, open, reset])
 
   async function submit(values: CourseFormValues) {
-    const result = await onSubmit(values)
+    let result: CourseActionResult
+
+    try {
+      const response = await onSubmit(values)
+
+      if (!isCourseActionResult(response)) {
+        setError("root", { message: unexpectedSubmitMessage })
+        return
+      }
+
+      result = response
+    } catch (error) {
+      console.error("Failed to submit course form", error)
+      setError("root", { message: unexpectedSubmitMessage })
+      return
+    }
 
     if (result.ok) {
       reset(emptyCourseFormValues)

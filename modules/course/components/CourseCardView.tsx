@@ -13,6 +13,7 @@ import {
 } from "@/modules/course/schemas/course"
 
 type CourseCardViewProps = {
+  canManageCourses: boolean
   courses: Course[]
   onDelete: (course: Course) => void
   onEdit: (course: Course) => void
@@ -35,7 +36,12 @@ function groupCoursesByDay(courses: Course[]) {
   })).filter((group) => group.courses.length > 0)
 }
 
-export function CourseCardView({ courses, onDelete, onEdit }: CourseCardViewProps) {
+export function CourseCardView({
+  canManageCourses,
+  courses,
+  onDelete,
+  onEdit,
+}: CourseCardViewProps) {
   const groupedCourses = groupCoursesByDay(courses)
 
   return (
@@ -87,21 +93,23 @@ export function CourseCardView({ courses, onDelete, onEdit }: CourseCardViewProp
                     <UserIcon aria-hidden="true" />
                     <span className="truncate">{course.instructor}</span>
                   </div>
-                  <div className="flex shrink-0 gap-2">
-                    <Button size="icon-sm" type="button" variant="ghost" onClick={() => onEdit(course)}>
-                      <EditIcon />
-                      <span className="sr-only">แก้ไขรายวิชา {course.code}</span>
-                    </Button>
-                    <Button
-                      size="icon-sm"
-                      type="button"
-                      variant="destructive"
-                      onClick={() => onDelete(course)}
-                    >
-                      <Trash2Icon />
-                      <span className="sr-only">ลบรายวิชา {course.code}</span>
-                    </Button>
-                  </div>
+                  {canManageCourses && (
+                    <div className="flex shrink-0 gap-2">
+                      <Button size="icon-sm" type="button" variant="ghost" onClick={() => onEdit(course)}>
+                        <EditIcon />
+                        <span className="sr-only">แก้ไขรายวิชา {course.code}</span>
+                      </Button>
+                      <Button
+                        size="icon-sm"
+                        type="button"
+                        variant="destructive"
+                        onClick={() => onDelete(course)}
+                      >
+                        <Trash2Icon />
+                        <span className="sr-only">ลบรายวิชา {course.code}</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
