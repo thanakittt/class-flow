@@ -5,15 +5,19 @@ export const dynamic = "force-dynamic"
 
 type CoursesPageProps = {
   searchParams: Promise<{
-    day?: string
-    q?: string
+    day?: string | string[]
+    q?: string | string[]
   }>
+}
+
+function getSingleParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value
 }
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const params = await searchParams
-  const query = params.q?.trim() ?? ""
-  const day = normalizeCourseDay(params.day)
+  const query = getSingleParam(params.q)?.trim() ?? ""
+  const day = normalizeCourseDay(getSingleParam(params.day))
   const courses = await listCourses({ day, query })
 
   return <CourseManagement courses={courses} filters={{ day: day ?? "", query }} />

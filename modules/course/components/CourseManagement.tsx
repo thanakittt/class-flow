@@ -116,7 +116,11 @@ export function CourseManagement({ courses, filters }: CourseManagementProps) {
           </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
-          <CourseFilters day={filters.day} query={filters.query} />
+          <CourseFilters
+            key={`${filters.query}:${filters.day}`}
+            day={filters.day}
+            query={filters.query}
+          />
           {courses.length > 0 ? (
             <CourseTable
               courses={courses}
