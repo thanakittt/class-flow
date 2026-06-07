@@ -3,6 +3,8 @@ import "server-only"
 import { sql } from "@/lib/db"
 import { COURSE_DAYS, type Course, type CourseDay } from "@/modules/course/schemas/course"
 
+export type CourseDayFilter = CourseDay | "today"
+
 export type CourseListFilters = {
   query?: string
   day?: string
@@ -20,12 +22,45 @@ type CourseRow = {
   section: number
 }
 
-export function normalizeCourseDay(value: string | undefined): CourseDay | undefined {
+const BANGKOK_WEEKDAY_TO_COURSE_DAY: Record<string, CourseDay> = {
+  Friday: "FRI",
+  Monday: "MON",
+  Saturday: "SAT",
+  Sunday: "SUN",
+  Thursday: "THU",
+  Tuesday: "TUE",
+  Wednesday: "WED",
+}
+
+export function getTodayCourseDay(date = new Date()): CourseDay {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Bangkok",
+    weekday: "long",
+  }).format(date)
+
+  return BANGKOK_WEEKDAY_TO_COURSE_DAY[weekday]
+}
+
+export function normalizeCourseDayFilter(value: string | undefined): CourseDayFilter | undefined {
   if (!value) {
     return undefined
   }
 
+  if (value === "today") {
+    return value
+  }
+
   return COURSE_DAYS.includes(value as CourseDay) ? (value as CourseDay) : undefined
+}
+
+export function resolveCourseDayFilter(value: CourseDayFilter | undefined): CourseDay | undefined {
+  return value === "today" ? getTodayCourseDay() : value
+}
+
+export function normalizeCourseDay(value: string | undefined): CourseDay | undefined {
+  const day = normalizeCourseDayFilter(value)
+
+  return day === "today" ? getTodayCourseDay() : day
 }
 
 export async function listCourses(filters: CourseListFilters = {}): Promise<Course[]> {

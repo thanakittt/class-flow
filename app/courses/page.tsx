@@ -1,5 +1,9 @@
 import { CourseManagement } from "@/modules/course/components/CourseManagement"
-import { listCourses, normalizeCourseDay } from "@/modules/course/queries/list-courses"
+import {
+  listCourses,
+  normalizeCourseDayFilter,
+  resolveCourseDayFilter,
+} from "@/modules/course/queries/list-courses"
 
 export const dynamic = "force-dynamic"
 
@@ -24,9 +28,10 @@ function resolveCourseView(value: string | undefined): CourseView {
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const params = await searchParams
   const query = getSingleParam(params.q)?.trim() ?? ""
-  const day = normalizeCourseDay(getSingleParam(params.day))
+  const dayFilter = normalizeCourseDayFilter(getSingleParam(params.day))
+  const day = resolveCourseDayFilter(dayFilter)
   const view = resolveCourseView(getSingleParam(params.view))
   const courses = await listCourses({ day, query })
 
-  return <CourseManagement courses={courses} filters={{ day: day ?? "", query }} view={view} />
+  return <CourseManagement courses={courses} filters={{ day: dayFilter ?? "", query }} view={view} />
 }

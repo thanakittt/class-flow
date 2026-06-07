@@ -87,6 +87,7 @@ export function CourseFilters({ query, day, view }: CourseFiltersProps) {
         <SelectContent>
           <SelectGroup>
             <SelectItem value="all">ทุกวัน</SelectItem>
+            <SelectItem value="today">วันนี้</SelectItem>
             {COURSE_DAYS.map((courseDay) => (
               <SelectItem key={courseDay} value={courseDay}>
                 {getCourseDayLabel(courseDay)}
